@@ -2,52 +2,52 @@ import java.io.*;
 import java.util.*;
 
 class Main {
+    public static String s;
+    public static int[] cnt = new int[200];
+    public static int flag = 0;
+    public static char mid;
 
     public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        StringBuilder front = new StringBuilder();
-        StringBuilder end = new StringBuilder();
-        int oddCheck = 0;
-        char mid = '0';
-        boolean flag = true;
-        int[] alphabet = new int[26];
-        String name = br.readLine();
+        s = br.readLine();
 
-
-        // 알파벳 개수 구하기
-        for(int i = 0; i < name.length(); i++){
-            alphabet[name.charAt(i) - 65]++;
+        // 문자별 개수 카운트
+        for(int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            cnt[c]++; 
         }
 
-        for(int i = 0; i < alphabet.length; i++){
-            // 알파벳 개수가 홀수일 때
-            if(alphabet[i] % 2 == 1){
-                if(oddCheck == 0){
-                    oddCheck++;
-                    mid = (char)('A' + i);
-                }else{ // 홀수가 2개 이상면 팰린드롬을 만들 수 없다.
-                    flag = false;
-                    sb = new StringBuilder("I'm Sorry Hansoo");
+        StringBuilder sb = new StringBuilder();
+        // 알파벳 순서대로 팰린드롬을 만들기 위해 'Z' -> 'A' 역순으로
+        for(int i = 'Z'; i >= 'A'; i--) {
+            if(cnt[i] > 0) {
+                // 알파벳 개수가 홀수면 중간 값으로 설정하고 flag 증가 및 개수 차감
+                if(cnt[i] % 2 == 1) {
+                    mid = (char)i;
+                    flag++;
+                    cnt[i]--;
+                }
+
+                // 홀수가 2개면 팰린드롬을 만들 수 없다.
+                if(flag == 2)
                     break;
+
+                // 해당 알파벳을 문자열 양 옆에 추가
+                for(int j = 0; j < cnt[i]; j += 2) {
+                    sb = sb.insert(0, (char)i);
+                    sb.append((char)i);
                 }
             }
-
-            for(int j = 0; j < alphabet[i] / 2; j++){
-                front.append((char)('A' + i));
-                end.insert(0, (char)('A' + i));
-            }
         }
 
-        if(flag){
-            if(mid == '0'){
-                sb.append(front).append(end);
-            }else{
-                sb.append(front).append(mid).append(end);
-            }
-        }
+        // 중간 값이 존재하면 현재 문자열의 중간에 삽입
+        if(mid != 0) 
+            sb.insert(sb.length() / 2, mid);
 
-        System.out.println(sb.toString());
+        if(flag == 2)
+            System.out.println("I'm Sorry Hansoo");
+        else
+            System.out.println(sb.toString());
     }
 }
